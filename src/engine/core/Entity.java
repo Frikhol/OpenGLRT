@@ -1,16 +1,28 @@
 package core;
 
-import renderiser.Loader;
-import renderiser.Renderer;
+import visualiser.Loader;
+import visualiser.Renderer;
 
 public class Entity {
     private String name;
     private Mesh mesh;
+    private int textureId;
 
     public Entity(String name, float[] positions) {
         this.name = name;
-        this.mesh = new Mesh(Loader.load(positions),positions.length/3);
+        this.mesh = Loader.load(positions);
         Renderer.entices.add(this);
+    }
+
+    public Entity(String name) {
+        this.name = name;
+        this.mesh = Loader.loadObjModel(name);
+        this.textureId = Loader.loadTexture("models/test.png");
+        Renderer.entices.add(this);
+    }
+
+    public int getTextureId() {
+        return textureId;
     }
 
     public String getName() {
