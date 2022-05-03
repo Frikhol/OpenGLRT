@@ -21,6 +21,14 @@ public class Display {
         return displayID;
     }
 
+    public static int[] getDisplayWIDTH() {
+        return WIDTH;
+    }
+
+    public static int[] getDisplayHEIGHT() {
+        return HEIGHT;
+    }
+
     public static void createDisplay() {
         GLFWErrorCallback.createPrint(System.err).set();
         if(!glfwInit()){

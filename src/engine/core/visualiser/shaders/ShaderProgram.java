@@ -1,4 +1,4 @@
-package visualiser;
+package core.visualiser.shaders;
 
 import org.joml.Matrix4f;
 import org.joml.Vector2f;

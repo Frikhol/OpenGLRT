@@ -1,6 +1,6 @@
-package visualiser;
+package core.visualiser;
 
-import core.Mesh;
+import entities.components.Mesh;
 import de.matthiasmann.twl.utils.PNGDecoder;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -35,6 +35,14 @@ public class Loader {
         createAndFillVBO(vaoId,0,3,positions);
         glBindVertexArray(0);
         return new Mesh(vaoId,positions.length/3);
+    }
+
+    public static Mesh load(float[] positions, int[] indices){
+        int vaoId = createVAO();
+        createAndFillEBO(vaoId,0,indices);
+        createAndFillVBO(vaoId,1,3,positions);
+        glBindVertexArray(0);
+        return new Mesh(vaoId,indices.length);
     }
 
     private static Mesh load (float[] positions, int[] indices, float[] textureCoords, float[] normals){
@@ -83,7 +91,7 @@ public class Loader {
     public static int loadTexture(String fileName){
         PNGDecoder decoder = null;
         try {
-            decoder = new PNGDecoder(Loader.class.getClassLoader().getResourceAsStream(fileName));
+            decoder = new PNGDecoder(Loader.class.getClassLoader().getResourceAsStream("textures/"+fileName+".png"));
         } catch (IOException e) {
             e.printStackTrace();
         }

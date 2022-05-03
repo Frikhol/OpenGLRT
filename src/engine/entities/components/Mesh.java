@@ -1,4 +1,4 @@
-package core;
+package entities.components;
 
 public class Mesh {
     private int vaoId;
