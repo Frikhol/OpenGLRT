@@ -9,6 +9,7 @@ import tools.Converter;
 public class MainShader extends ShaderProgram {
 
     private static final String VERTEX_FILE = "src/engine/core/visualiser/shaders/VertexShader.glsl";
+    private static final String GEOMETRY_FILE = "src/engine/core/visualiser/shaders/GeometryShader.glsl";
     private static final String FRAGMENT_FILE = "src/engine/core/visualiser/shaders/FragmentShader.glsl";
 
     private int location_transformationMatrix;
@@ -18,7 +19,7 @@ public class MainShader extends ShaderProgram {
     private int location_lightColor;
 
     public MainShader() {
-        super(VERTEX_FILE, FRAGMENT_FILE);
+        super(VERTEX_FILE,GEOMETRY_FILE,FRAGMENT_FILE);
     }
 
     @Override

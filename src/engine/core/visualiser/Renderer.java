@@ -13,6 +13,8 @@ import tools.Converter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.lwjgl.glfw.GLFW.glfwGetTime;
+
 public class Renderer {
 
     public static List<Entity> entices = new ArrayList<>();
@@ -22,7 +24,7 @@ public class Renderer {
         shader.start();
         shader.loadProjectionMatrix(Converter.createProjectionMatrix());
         shader.loadViewMatrix(new Camera(new Vector3f(0f,0f,5f),new Vector3f(0f,0f,0f),0f,0f,0f));
-        shader.loadLight(new Light(new Vector3f(0f,1000f,2000f),new Vector3f(1,1,1)));
+        shader.loadLight(new Light(new Vector3f(0f,1f*(float)glfwGetTime()%1000,2000f),new Vector3f(1,1,1)));
         for(Entity entity : entices) {
             prepareTexturedEntity(entity);
             shader.loadTransformationMatrix(Converter.createTransformationMatrix(

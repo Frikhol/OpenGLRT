@@ -13,17 +13,22 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 
+import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
+
 public abstract class ShaderProgram {
 
     private int programID;
     private int vertexShaderID;
+    private int geometryShaderID;
     private int fragmentShaderID;
 
-    public ShaderProgram(String vertexFile, String fragmentFile){
+    public ShaderProgram(String vertexFile,String geometryFile, String fragmentFile){
         vertexShaderID = loadShader(vertexFile,GL20.GL_VERTEX_SHADER);
+        geometryShaderID = loadShader(geometryFile,GL_GEOMETRY_SHADER);
         fragmentShaderID = loadShader(fragmentFile,GL20.GL_FRAGMENT_SHADER);
         programID = GL20.glCreateProgram();
         GL20.glAttachShader(programID,vertexShaderID);
+        GL20.glAttachShader(programID,geometryShaderID);
         GL20.glAttachShader(programID,fragmentShaderID);
         bindAttributes();
         GL20.glLinkProgram(programID);
@@ -48,8 +53,10 @@ public abstract class ShaderProgram {
     public void cleanUp(){
         stop();
         GL20.glDetachShader(programID,vertexShaderID);
+        GL20.glDetachShader(programID,geometryShaderID);
         GL20.glDetachShader(programID,fragmentShaderID);
         GL20.glDeleteShader(vertexShaderID);
+        GL20.glDeleteShader(geometryShaderID);
         GL20.glDeleteShader(fragmentShaderID);
         GL20.glDeleteProgram(programID);
     }
