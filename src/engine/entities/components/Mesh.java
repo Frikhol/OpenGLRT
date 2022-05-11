@@ -2,6 +2,7 @@ package entities.components;
 
 public class Mesh {
     private int vaoId;
+    private float[] polyBuffer;
     private int vertexCount;
 
     public Mesh(int vaoId, int vertexCount) {
@@ -9,8 +10,22 @@ public class Mesh {
         this.vertexCount = vertexCount;
     }
 
+    public Mesh(int vaoId, int vertexCount, float[] polyBuffer) {
+        this.vaoId = vaoId;
+        this.polyBuffer = polyBuffer;
+        this.vertexCount = vertexCount;
+    }
+
     public int getVaoId() {
         return vaoId;
+    }
+
+    public float[] getPolyBuffer() {
+        return polyBuffer;
+    }
+
+    public void setPolyBuffer(float[] polyBuffer) {
+        this.polyBuffer = polyBuffer;
     }
 
     public int getVertexCount() {

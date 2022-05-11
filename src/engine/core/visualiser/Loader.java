@@ -1,7 +1,7 @@
 package core.visualiser;
 
-import entities.components.Mesh;
 import de.matthiasmann.twl.utils.PNGDecoder;
+import entities.components.Mesh;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
@@ -14,10 +14,7 @@ import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
@@ -45,14 +42,35 @@ public class Loader {
         return new Mesh(vaoId,indices.length);
     }
 
+    public static Mesh load(float[] positions, float[] textureCoords){
+        int vaoId = createVAO();
+        createAndFillVBO(vaoId,0,3,positions);
+        createAndFillVBO(vaoId,1,2,textureCoords);
+        glBindVertexArray(0);
+        return new Mesh(vaoId,positions.length/3);
+    }
+
     private static Mesh load (float[] positions, int[] indices, float[] textureCoords, float[] normals){
         int vaoId = createVAO();
-        createAndFillEBO(vaoId,0,indices);
-        createAndFillVBO(vaoId,1,3,positions);
-        createAndFillVBO(vaoId,2,2,textureCoords);
-        createAndFillVBO(vaoId,3,3,normals);
+        createAndFillVBO(vaoId,0,3,positions);
+        createAndFillVBO(vaoId,1,2,textureCoords);
+        createAndFillVBO(vaoId,2,3,normals);
+        createAndFillEBO(vaoId,3,indices);
         glBindVertexArray(0);
-        return new Mesh(vaoId,indices.length);
+        float[] polyBuffer = createPolyBuffer(indices,positions);
+        return new Mesh(vaoId,indices.length,polyBuffer);
+    }
+
+    private static float[] createPolyBuffer(int[] indices, float[] positions) {
+        float[] buf = new float[indices.length*3];
+        System.out.println(indices.length);
+        System.out.println(positions.length);
+        for(int i = 0;i<indices.length;i++){
+            buf[i * 3] = (positions[3*indices[i]]);
+            buf[1+i*3] = (positions[3*indices[i]+1]);
+            buf[2+i*3] = (positions[3*indices[i]+2]);
+        }
+        return buf;
     }
 
     private static int createVAO(){
@@ -181,8 +199,10 @@ public class Loader {
             verticesArray[vertexPointer++] = vertex.z;
 
         }
+        int max = 0;
         for(int i = 0;i<indices.size();i++){
             indicesArray[i] = indices.get(i);
+            max = Math.max(indicesArray[i],max);
         }
         try {
             fr.close();

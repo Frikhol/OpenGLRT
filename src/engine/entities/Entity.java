@@ -17,6 +17,13 @@ public class Entity {
         Renderer.entices.add(this);
     }
 
+    public Entity(float[] positions,float[] texCords) {
+        this.mesh = Loader.load(positions,texCords);
+        this.transform = new Transform();
+        this.textureId = Loader.loadTexture("test");
+        Renderer.entices.add(this);
+    }
+
     public Entity(String name) {
         this.name = name;
         this.mesh = Loader.loadObjModel(name);

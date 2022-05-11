@@ -1,17 +1,15 @@
 #version 400
 
-in fData
-{
-    vec3 normal;
-    vec3 color;
-}frag;
+in vec2 dir;
 
 out vec4 outColor;
 
-uniform vec3 lightColor;
+uniform sampler2D someTexture;
 
 void main(void){
 
-    outColor = vec4(frag.color,1.0);
+
+
+    outColor = vec4(dir,0.0,1.0);
 
 }

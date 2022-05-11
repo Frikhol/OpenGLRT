@@ -19,7 +19,7 @@ public class MainShader extends ShaderProgram {
     private int location_lightColor;
 
     public MainShader() {
-        super(VERTEX_FILE,GEOMETRY_FILE,FRAGMENT_FILE);
+        super(VERTEX_FILE,FRAGMENT_FILE);
     }
 
     @Override
