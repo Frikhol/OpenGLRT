@@ -57,19 +57,23 @@ public class Loader {
         createAndFillVBO(vaoId,2,3,normals);
         createAndFillEBO(vaoId,3,indices);
         glBindVertexArray(0);
-        float[] polyBuffer = createPolyBuffer(indices,positions);
+        float[] polyBuffer = createPolyBuffer(indices,positions,normals);
         return new Mesh(vaoId,indices.length,polyBuffer);
     }
 
-    private static float[] createPolyBuffer(int[] indices, float[] positions) {
-        float[] buf = new float[indices.length*3];
-        System.out.println(indices.length);
-        System.out.println(positions.length);
+    private static float[] createPolyBuffer(int[] indices, float[] positions,float[] normals) {
+        float[] buf = new float[indices.length*6];
+        //System.out.println(Arrays.toString(indices));
+        //System.out.println(Arrays.toString(positions));
         for(int i = 0;i<indices.length;i++){
-            buf[i * 3] = (positions[3*indices[i]]);
-            buf[1+i*3] = (positions[3*indices[i]+1]);
-            buf[2+i*3] = (positions[3*indices[i]+2]);
+            buf[i * 6] = (positions[3*indices[i]]);
+            buf[1+i*6] = (positions[3*indices[i]+1]);
+            buf[2+i*6] = (positions[3*indices[i]+2]);
+            buf[3+i*6] = (normals[3*indices[i]]);
+            buf[4+i*6] = (normals[3*indices[i]+1]);
+            buf[5+i*6] = (normals[3*indices[i]+2]);
         }
+        //System.out.println(Arrays.toString(buf));
         return buf;
     }
 

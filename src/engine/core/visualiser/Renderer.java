@@ -6,6 +6,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
+import tools.Converter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,12 @@ import java.util.List;
 public class Renderer {
 
     public static List<Entity> entices = new ArrayList<>();
+    public static Entity model;
     private static MainShader shader = new MainShader();
+
+    public static void setModel(Entity model) {
+        Renderer.model = model;
+    }
 
     public static void render(){
         shader.start();
@@ -22,10 +28,10 @@ public class Renderer {
         //shader.loadLight(new Light(new Vector3f(1000f,1000f,2000f),new Vector3f(1,1,1)));
         for(Entity entity : entices) {
             prepareTexturedEntity(entity);
-            //shader.loadTransformationMatrix(Converter.createTransformationMatrix(
-                    //entity.getTransform().getPosition(),
-                    //entity.getTransform().getRotation(),
-                    //entity.getTransform().getScale()));
+            shader.loadTransformationMatrix(Converter.createTransformationMatrix(
+                    model.getTransform().getPosition(),
+                    model.getTransform().getRotation(),
+                    model.getTransform().getScale()));
             GL11.glDrawArrays(GL11.GL_TRIANGLES,0,6);
             unbindTexturedModel();
         }
