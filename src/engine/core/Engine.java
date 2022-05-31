@@ -42,8 +42,8 @@ public class Engine {
                 0.0f,0.0f,
         };
         some2 = new Entity("test");
-        some2.getTransform().translateZ(2.5f);
-        some2.getTransform().rotateX((float) Math.toRadians(-90));
+        some2.getTransform().translateY(2f);
+        some2.getTransform().rotateX((float) Math.toRadians(-180));
         Renderer.setModel(some2);
         System.out.println(some2.getMesh().getPolyBuffer().length/18);
         int SSBO = glGenBuffers();

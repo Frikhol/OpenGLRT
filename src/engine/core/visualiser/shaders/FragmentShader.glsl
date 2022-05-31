@@ -44,9 +44,7 @@ float plaIntersect( in vec3 ro, in vec3 rd, in vec4 p )
 }
 
 vec3 castRay(vec3 ro, vec3 rd){
-    float MAX_DIST = 100000;
-    vec3 planeNormal = vec3(0.0,0.0,-1.0);
-    float res = MAX_DIST;
+    float res = 100000;
     vec3 it;
     bool finded=false;
     vec3 norm;
@@ -65,14 +63,8 @@ vec3 castRay(vec3 ro, vec3 rd){
             norm = normalize(cross(v2-v1,v3-v1));
         }
     }
-    vec3 light = normalize(vec3(-1000,500,0));
+    vec3 light = normalize(vec3(5,-5,100));
     if(!finded){
-        it.x = plaIntersect(ro,rd,vec4(planeNormal,1.0));
-        if(it.x>0&&it.x<res){
-            res = it.x;
-            norm = planeNormal;
-            return vec3(0.3,0.3,0.3);
-        }
         return vec3(-1.0);
     }
     vec3 reflection = reflect(rd, norm);
@@ -83,9 +75,18 @@ vec3 castRay(vec3 ro, vec3 rd){
 
 void main(void){
     vec2 uv = (dir.xy-0.5);
-    vec3 rayOrigin = vec3(-15.0,0.0,0.0);
-    vec3 rayDirection = normalize(vec3(1.0,uv));
+    vec3 sun = (vec3(10,-5,10));
+    vec3 rayOrigin = vec3(0.0,0.0,15.0);
+    vec3 rayDirection = normalize(vec3(uv.x,uv.y,-1.0));
     vec3 col = castRay(rayOrigin,rayDirection);
-    if(castRay(rayOrigin,-normalize(vec3(-1000,500,0))).x != -1.0)col*=0.2;
+    float it = col.x;
+    if(col.x<=0.0){
+        vec3 planeNormal = vec3(0.0, -1.0, 0.0);
+        it = plaIntersect(rayOrigin, rayDirection, vec4(planeNormal, 1.0));
+        if(it>0&&it<100000)
+            col=vec3(0.3);
+        else col=vec3(0.3,0.6,1.0);
+    }
+    if(castRay(rayOrigin+rayDirection*(it-0.001),sun).x != -1.0)col*=0.2;
     outColor = vec4(col,1.0);
 }
