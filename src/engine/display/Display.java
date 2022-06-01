@@ -41,7 +41,7 @@ public class Display {
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
         glfwWindowHint(GLFW_VISIBLE, GL_FALSE); // the window will stay hidden after creation
         glfwWindowHint(GLFW_RESIZABLE, GL_TRUE); // the window will be resizable
-        glfwWindowHint(GLFW_SAMPLES, 0);
+        glfwWindowHint(GLFW_SAMPLES, 8);
         WIDTH[0] = 720;
         HEIGHT[0] = 720;
         displayID = glfwCreateWindow(WIDTH[0], HEIGHT[0], "OpenGLRT", NULL, NULL);

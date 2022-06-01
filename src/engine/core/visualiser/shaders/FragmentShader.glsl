@@ -90,6 +90,8 @@ vec3 traceRay(vec3 ro,vec3 rd){
     vec3 res = castRay(ro,rd);
     if(res.x == -1.0) return vec3(0.3,0.6,1.0);
     vec3 col = vec3(1.0)*res.y;
+    if(res.y != 0.5)
+        col*=vec3(0.0,1.0,0.0);
     vec3 sun = normalize(vec3(5,-5,10));
     //if(res.z >=0)
         if(castRay(ro+rd*(res.x-0.001),sun).x != -1.0)col*=0.5;
