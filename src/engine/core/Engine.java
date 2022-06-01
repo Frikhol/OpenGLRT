@@ -42,7 +42,7 @@ public class Engine {
                 0.0f,0.0f,
         };
         some2 = new Entity("test");
-        some2.getTransform().translateY(2f);
+        some2.getTransform().translateY(1f);
         some2.getTransform().rotateX((float) Math.toRadians(-180));
         Renderer.setModel(some2);
         System.out.println(some2.getMesh().getPolyBuffer().length/18);
@@ -51,14 +51,14 @@ public class Engine {
         glBufferData(GL_SHADER_STORAGE_BUFFER,some2.getMesh().getPolyBuffer(),GL_STATIC_DRAW);
         glBindBufferBase(GL_SHADER_STORAGE_BUFFER,3,SSBO);
         some = new Entity(vertices,texCoords);
-    }
-
-    public static void loop(){
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        some2.getTransform().rotateY((float) Math.toRadians(0.3));
+        some2.getTransform().rotateY((float) Math.toRadians(-45));
         render();
         glfwSwapBuffers(Display.getDisplayID()); // Don't delete
         glfwPollEvents();
+    }
+
+    public static void loop(){
     }
 
     public static void close(){
