@@ -7,9 +7,17 @@ out vec4 outColor;
 uniform sampler2D someTexture;
 uniform mat4 transformationMatrix;
 
-layout(std430, binding = 3) buffer layoutName
+layout(std430, binding = 1) buffer nodeBuffer
 {
-    float modelData[];
+    int nodeData[];
+};
+layout(std430, binding = 2) buffer boxBuffer
+{
+    float boxData[];
+};
+layout(std430, binding = 3) buffer polyBuffer
+{
+    float polyData[];
 };
 
 vec2 sphIntersect( in vec3 ro, in vec3 rd, in vec3 ce, float ra )
@@ -21,6 +29,19 @@ vec2 sphIntersect( in vec3 ro, in vec3 rd, in vec3 ce, float ra )
     if( h<0.0 ) return vec2(-1.0); // no intersection
     h = sqrt( h );
     return vec2( -b-h, -b+h );
+}
+
+vec2 boxIntersection(in vec3 ro, in vec3 rd, in vec3 rad, out vec3 oN)  {
+    vec3 m = 1.0 / rd;
+    vec3 n = m * ro;
+    vec3 k = abs(m) * rad;
+    vec3 t1 = -n - k;
+    vec3 t2 = -n + k;
+    float tN = max(max(t1.x, t1.y), t1.z);
+    float tF = min(min(t2.x, t2.y), t2.z);
+    if(tN > tF || tF < 0.0) return vec2(-1.0);
+    oN = -sign(rd) * step(t1.yzx, t1.xyz) * step(t1.zxy, t1.xyz);
+    return vec2(tN, tF);
 }
 
 vec3 triIntersect( in vec3 ro, in vec3 rd, in vec3 v0, in vec3 v1, in vec3 v2 )
@@ -49,7 +70,50 @@ vec3 castRay(vec3 ro, vec3 rd){
     bool finded=false;
     vec3 norm;
     vec3 col = vec3(1.0);
-    for(int i = 0;i<100000;i++){
+    for(int i = 0;i<626;i++){
+        vec3 v1 = (transformationMatrix* vec4(modelData[i*18],modelData[i*18+1],modelData[i*18+2],1)).xyz;
+        vec3 v2 = (transformationMatrix* vec4(modelData[i*18+6],modelData[i*18+7],modelData[i*18+8],1)).xyz;
+        vec3 v3 = (transformationMatrix* vec4(modelData[i*18+12],modelData[i*18+13],modelData[i*18+14],1)).xyz;
+        vec3 n1 = (transformationMatrix* vec4(modelData[i*18+3],modelData[i*18+4],modelData[i*18+5],1)).xyz;
+        vec3 n2 = (transformationMatrix* vec4(modelData[i*18+9],modelData[i*18+10],modelData[i*18+11],1)).xyz;
+        vec3 n3 = (transformationMatrix* vec4(modelData[i*18+15],modelData[i*18+16],modelData[i*18+17],1)).xyz;
+        it = triIntersect(ro,rd,v1,v2,v3);
+        if(it.x>0.0 && it.x<=res){
+            finded = true;
+            res = it.x;
+            norm = normalize(vec3(((1-it.y-it.z)*n1.x+(it.y)*n2.x+(it.z)*n3.x),((1-it.y-it.z)*n1.y+(it.y)*n2.y+(it.z)*n3.y),((1-it.y-it.z)*n1.z+(it.y)*n2.z+(it.z)*n3.z)));
+            //norm = normalize(cross(v2-v1,v3-v1));
+        }
+    }
+    vec3 light = normalize(vec3(5,-5,10));
+    if(!finded){
+        vec3 planeNormal = vec3(0.0, -1.0, 0.0);
+        it.x = plaIntersect(ro, rd, vec4(planeNormal, 1.0));
+        if(it.x>0&&it.x<res){
+            norm = planeNormal;
+            if(dot(norm,light)>0)
+            return vec3(it.x,0.5,0.0);
+            else
+            return vec3(it.x,0.5,-1.0);
+        }
+        else return vec3(-1.0);
+    }
+    vec3 reflection = reflect(rd, norm);
+    float diff = max(dot(light,norm),0)*0.5;
+    float spec = pow(max(dot(reflection,light),0),4)*10;
+    it.y = (diff+spec+0.1);
+    it.x = res;
+    it.z = dot(norm,light);
+    return it;
+}
+
+/*vec3 castRay(vec3 ro, vec3 rd){
+    float res = 100000;
+    vec3 it;
+    bool finded=false;
+    vec3 norm;
+    vec3 col = vec3(1.0);
+    for(int i = 0;i<626;i++){
         vec3 v1 = (transformationMatrix* vec4(modelData[i*18],modelData[i*18+1],modelData[i*18+2],1)).xyz;
         vec3 v2 = (transformationMatrix* vec4(modelData[i*18+6],modelData[i*18+7],modelData[i*18+8],1)).xyz;
         vec3 v3 = (transformationMatrix* vec4(modelData[i*18+12],modelData[i*18+13],modelData[i*18+14],1)).xyz;
@@ -84,7 +148,7 @@ vec3 castRay(vec3 ro, vec3 rd){
     it.x = res;
     it.z = dot(norm,light);
     return it;
-}
+}*/
 
 vec3 traceRay(vec3 ro,vec3 rd){
     vec3 res = castRay(ro,rd);

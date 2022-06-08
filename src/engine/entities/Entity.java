@@ -21,7 +21,6 @@ public class Entity {
         this.mesh = Loader.load(positions,texCords);
         this.transform = new Transform();
         this.textureId = Loader.loadTexture("test");
-        Renderer.entices.add(this);
     }
 
     public Entity(String name) {

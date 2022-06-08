@@ -1,9 +1,12 @@
 package entities.components;
 
+import entities.bsptree.BSPTree;
+
 public class Mesh {
     private int vaoId;
     private float[] polyBuffer;
     private int vertexCount;
+    private BSPTree bspTree;
 
     public Mesh(int vaoId, int vertexCount) {
         this.vaoId = vaoId;

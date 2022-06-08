@@ -14,27 +14,43 @@ import java.util.List;
 public class Renderer {
 
     public static List<Entity> entices = new ArrayList<>();
-    public static Entity model;
     private static MainShader shader = new MainShader();
 
-    public static void setModel(Entity model) {
-        Renderer.model = model;
-    }
-
     public static void render(){
+        //quad v
+        float[] vertices = {
+                -1.0f,1.0f,0.0f, //2
+                -1.0f,-1.0f,0.0f, //3
+                1.0f,-1.0f,0.0f, //1
+
+                1.0f,-1.0f,0.0f, //1
+                1.0f,1.0f,0.0f, //4
+                -1.0f,1.0f,0.0f, //2
+        };
+        //quad vt
+        float[] texCoords = {
+                0.0f,0.0f,
+                0.0f,1.0f,
+                1.0f,1.0f,
+
+                1.0f,1.0f,
+                1.0f,0.0f,
+                0.0f,0.0f,
+        };
+        Entity quadSpace = new Entity(vertices,texCoords);
         shader.start();
+        prepareTexturedEntity(quadSpace);
         //shader.loadProjectionMatrix(Converter.createProjectionMatrix());
         //shader.loadViewMatrix(new Camera(new Vector3f(0f,0f,5f),new Vector3f(0f,0f,0f),0f,0f,0f));
         //shader.loadLight(new Light(new Vector3f(1000f,1000f,2000f),new Vector3f(1,1,1)));
         for(Entity entity : entices) {
-            prepareTexturedEntity(entity);
             shader.loadTransformationMatrix(Converter.createTransformationMatrix(
-                    model.getTransform().getPosition(),
-                    model.getTransform().getRotation(),
-                    model.getTransform().getScale()));
+                    entity.getTransform().getPosition(),
+                    entity.getTransform().getRotation(),
+                    entity.getTransform().getScale()));
             GL11.glDrawArrays(GL11.GL_TRIANGLES,0,6);
-            unbindTexturedModel();
         }
+        unbindTexturedModel();
         shader.stop();
     }
 
