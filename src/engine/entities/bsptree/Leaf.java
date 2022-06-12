@@ -6,12 +6,17 @@ public class Leaf {
     private Leaf left;
     private Leaf right;
     private int nodeId;
+    private int rootId;
     private GeneralBox genBox;
     private int triangleId;
     private List<Triangle> triangleList;
 
     public int getNodeId() {
         return nodeId;
+    }
+
+    public int getRootId() {
+        return rootId;
     }
 
     public Leaf getLeft() {
@@ -34,12 +39,13 @@ public class Leaf {
         return genBox;
     }
 
-    public Leaf(Leaf left, Leaf right, int nodeId, int triangleId, List<Triangle> triangleList) {
+    public Leaf(Leaf left, Leaf right, int nodeId, int rootId, int triangleId, List<Triangle> triangleList) {
         this.left = left;
         this.right = right;
         this.triangleList = triangleList;
         this.triangleId = triangleId;
         this.genBox = new GeneralBox(triangleList);
         this.nodeId = nodeId;
+        this.rootId = rootId;
     }
 }

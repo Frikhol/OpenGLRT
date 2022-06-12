@@ -15,7 +15,25 @@ public class Display {
     private static long displayID;
     private static int[] WIDTH = new int[1]; //make changeable
     private static int[] HEIGHT = new int[1]; //make changeable
+    private static double cursorX = 0;
+    private static double cursorY = 0;
     //private static int SAMPLES = 16;
+
+    public static double getCursorX() {
+        return cursorX;
+    }
+
+    public static void setCursorX(double cursorX) {
+        Display.cursorX = cursorX;
+    }
+
+    public static double getCursorY() {
+        return cursorY;
+    }
+
+    public static void setCursorY(double cursorY) {
+        Display.cursorY = cursorY;
+    }
 
     public static long getDisplayID(){
         return displayID;
@@ -41,7 +59,7 @@ public class Display {
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
         glfwWindowHint(GLFW_VISIBLE, GL_FALSE); // the window will stay hidden after creation
         glfwWindowHint(GLFW_RESIZABLE, GL_TRUE); // the window will be resizable
-        glfwWindowHint(GLFW_SAMPLES, 8);
+        glfwWindowHint(GLFW_SAMPLES, 16);
         WIDTH[0] = 720;
         HEIGHT[0] = 720;
         displayID = glfwCreateWindow(WIDTH[0], HEIGHT[0], "OpenGLRT", NULL, NULL);

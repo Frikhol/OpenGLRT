@@ -10,6 +10,7 @@ public class BSPTree {
     private Leaf node;
     private int[] triangleId = new int[1];
     private int[] nodeId = new int[1];
+    private int[] rootId = new int[1];
     private List<Triangle> polyList;
     private List<Leaf> nodeList;
     private static final int COPLANAR = 100500;
@@ -22,10 +23,11 @@ public class BSPTree {
     public BSPTree(List<Triangle> triangles,int limit) {
         this.polyList = new ArrayList<>();
         this.nodeList = new ArrayList<>();
-        triangleId[0] = 0;
-        nodeId[0] = 0;
+        this.triangleId[0] = 0;
+        this.nodeId[0] = 0;
+        this.rootId[0] = nodeId[0];
         this.node = BuildBSPTree(triangles,limit);
-        nodeList.sort(new SortLeaves());
+        this.nodeList.sort(new SortLeaves());
     }
 
     public List<Leaf> getNodeList() {
@@ -40,7 +42,7 @@ public class BSPTree {
         return polyList;
     }
 
-    class SortLeaves implements Comparator<Leaf>
+    static class SortLeaves implements Comparator<Leaf>
     {
         public int compare(Leaf a, Leaf b)
         {
@@ -52,7 +54,8 @@ public class BSPTree {
     public Leaf BuildBSPTree(List<Triangle> triangles,int limit){
         int polyId = triangleId[0];
         int genId = nodeId[0];
-        nodeId[0]++;
+        int backId = rootId[0];
+
         //Empty check
         if(triangles.isEmpty()) {
             return null;
@@ -61,11 +64,11 @@ public class BSPTree {
         //Final leaf
         if(triangleCount<=limit){
             this.getPolyList().add(triangles.get(0));
-            Leaf leaf = new Leaf(null,null,genId,polyId,triangles);
+            Leaf leaf = new Leaf(null,null,genId,backId,polyId,triangles);
             nodeList.add(leaf);
             return leaf;
         }
-        //Sort
+        //Split
         int splitTriangleIndex = findOptimalTriangle(triangles);
         List<Triangle> left = new ArrayList<>();
         List<Triangle> right = new ArrayList<>();
@@ -97,13 +100,18 @@ public class BSPTree {
             }
         }
         //Return filled leaf
+        rootId[0]=genId;
+        nodeId[0]++;
         Leaf leftLeaf = BuildBSPTree(left,1);
         triangleId[0]++;
+        rootId[0]=genId;
+        nodeId[0]++;
         Leaf rightLeaf = BuildBSPTree(right,1);
         Leaf leaf =  new Leaf(
                 leftLeaf,
                 rightLeaf,
                 genId,
+                backId,
                 polyId,
                 triangles);
         nodeList.add(leaf);

@@ -28,9 +28,9 @@ public class GeneralBox {
         this.position.x = (maxX+minX)/2;
         this.position.y = (maxY+minY)/2;
         this.position.z = (maxZ+minZ)/2;
-        this.size.x = Math.abs(maxX)+Math.abs(minX);
-        this.size.y = Math.abs(maxY)+Math.abs(minY);
-        this.size.z = Math.abs(maxZ)+Math.abs(minZ);
+        this.size.x = maxX-minX;
+        this.size.y = maxY-minY;
+        this.size.z = maxZ-minZ;
     }
 
     public Vector3f getPosition() {

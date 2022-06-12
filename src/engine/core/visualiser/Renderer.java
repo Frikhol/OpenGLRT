@@ -48,8 +48,9 @@ public class Renderer {
                     entity.getTransform().getPosition(),
                     entity.getTransform().getRotation(),
                     entity.getTransform().getScale()));
-            GL11.glDrawArrays(GL11.GL_TRIANGLES,0,6);
+
         }
+        GL11.glDrawArrays(GL11.GL_TRIANGLES,0,6);
         unbindTexturedModel();
         shader.stop();
     }

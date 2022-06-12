@@ -4,12 +4,12 @@ public class Bufferizer {
 
     public static int[] createNodeBuffer(BSPTree bspTree){
         int nodeCount = bspTree.getNodeId();
-        int[] nodeBuffer = new int[nodeCount*5];
+        int[] nodeBuffer = new int[(nodeCount+1)*5];
         for(int i = 0;i<nodeCount;i++){
             Leaf leaf = bspTree.getNodeList().get(i);
             nodeBuffer[i*5] = (leaf.getLeft() == null)?-1:leaf.getLeft().getNodeId();
             nodeBuffer[1+i*5] = (leaf.getRight() == null)?-1:leaf.getRight().getNodeId();
-            nodeBuffer[2+i*5] = leaf.getNodeId();
+            nodeBuffer[2+i*5] = leaf.getRootId();
             nodeBuffer[3+i*5] = leaf.getTriangleId();
             nodeBuffer[4+i*5] = leaf.getTriangleList().size();
         }
@@ -18,7 +18,7 @@ public class Bufferizer {
 
     public static float[] createBoxBuffer(BSPTree bspTree){
         int nodeCount = bspTree.getNodeId();
-        float[] boxBuffer = new float[nodeCount*6];
+        float[] boxBuffer = new float[(nodeCount+1)*6];
         for(int i = 0;i<nodeCount;i++){
             Leaf leaf = bspTree.getNodeList().get(i);
             boxBuffer[i*6] = leaf.getGenBox().getPosition().x;
