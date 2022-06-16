@@ -1,7 +1,10 @@
 package core.visualiser;
 
+import core.Engine;
 import core.visualiser.shaders.MainShader;
+import entities.Camera;
 import entities.Entity;
+import org.joml.Vector2f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
@@ -16,29 +19,13 @@ public class Renderer {
     public static List<Entity> entices = new ArrayList<>();
     private static MainShader shader = new MainShader();
 
-    public static void render(){
+    public static void render(float[] vertices,float[] texCoords,Entity quadSpace){
         //quad v
-        float[] vertices = {
-                -1.0f,1.0f,0.0f, //2
-                -1.0f,-1.0f,0.0f, //3
-                1.0f,-1.0f,0.0f, //1
 
-                1.0f,-1.0f,0.0f, //1
-                1.0f,1.0f,0.0f, //4
-                -1.0f,1.0f,0.0f, //2
-        };
-        //quad vt
-        float[] texCoords = {
-                0.0f,0.0f,
-                0.0f,1.0f,
-                1.0f,1.0f,
 
-                1.0f,1.0f,
-                1.0f,0.0f,
-                0.0f,0.0f,
-        };
-        Entity quadSpace = new Entity(vertices,texCoords);
         shader.start();
+        Camera cam = Engine.getCamera();
+        shader.loadCamera(cam.getPosition(),new Vector2f(cam.getPitch()*(float)Math.PI/180,cam.getYaw()*(float)Math.PI/180));
         prepareTexturedEntity(quadSpace);
         //shader.loadProjectionMatrix(Converter.createProjectionMatrix());
         //shader.loadViewMatrix(new Camera(new Vector3f(0f,0f,5f),new Vector3f(0f,0f,0f),0f,0f,0f));

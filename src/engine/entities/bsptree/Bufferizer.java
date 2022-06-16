@@ -4,31 +4,68 @@ public class Bufferizer {
 
     public static int[] createNodeBuffer(BSPTree bspTree){
         int nodeCount = bspTree.getNodeId();
-        int[] nodeBuffer = new int[(nodeCount+1)*5];
-        for(int i = 0;i<nodeCount;i++){
+        System.out.println(nodeCount);
+        int[] nodeBuffer = new int[(nodeCount+1)*4];
+        for(int i = 0;i<nodeCount+1;i++){
             Leaf leaf = bspTree.getNodeList().get(i);
-            nodeBuffer[i*5] = (leaf.getLeft() == null)?-1:leaf.getLeft().getNodeId();
-            nodeBuffer[1+i*5] = (leaf.getRight() == null)?-1:leaf.getRight().getNodeId();
-            nodeBuffer[2+i*5] = leaf.getRootId();
-            nodeBuffer[3+i*5] = leaf.getTriangleId();
-            nodeBuffer[4+i*5] = leaf.getTriangleList().size();
+            nodeBuffer[i*4] = getNext(bspTree,i);
+            nodeBuffer[1+i*4] = leaf.getTriangleId();
+            nodeBuffer[2+i*4] = leaf.getTriangleList().size();
+            nodeBuffer[3+i*4] = leaf.getLeft()==null?1:0;
         }
         return nodeBuffer;
     }
 
+    private static int getNext(BSPTree bspTree,int id){
+        if(id == 0)
+            return -1;
+        Leaf leaf = bspTree.getNodeList().get(id);
+        if(leaf.getLeft()==null)
+            if(id!=bspTree.getNodeId())
+                return id+1;
+        int root = leaf.getRootId();
+        int right = bspTree.getNodeList().get(root).getRight().getNodeId();
+        while(id == right) {
+            id = root;
+            if(id == 0)
+                return -1;
+            root = bspTree.getNodeList().get(id).getRootId();
+            right = bspTree.getNodeList().get(root).getRight().getNodeId();
+        }
+        return right;
+    }
+
     public static float[] createBoxBuffer(BSPTree bspTree){
         int nodeCount = bspTree.getNodeId();
-        float[] boxBuffer = new float[(nodeCount+1)*6];
-        for(int i = 0;i<nodeCount;i++){
-            Leaf leaf = bspTree.getNodeList().get(i);
-            boxBuffer[i*6] = leaf.getGenBox().getPosition().x;
-            boxBuffer[1+i*6] = leaf.getGenBox().getPosition().y;
-            boxBuffer[2+i*6] = leaf.getGenBox().getPosition().z;
-            boxBuffer[3+i*6] = leaf.getGenBox().getSize().x;
-            boxBuffer[4+i*6] = leaf.getGenBox().getSize().y;
-            boxBuffer[5+i*6] = leaf.getGenBox().getSize().z;
+        float[] quadBuffer = new float[(nodeCount+1)*24];
+        for(int i = 0;i<nodeCount+1;i++) {
+            BoundingBox box = bspTree.getNodeList().get(i).getBoundingBox();
+            quadBuffer[i * 24] = box.getBoxPoint(0).x;
+            quadBuffer[1 + i * 24] = box.getBoxPoint(0).y;
+            quadBuffer[2 + i * 24] = box.getBoxPoint(0).z;
+            quadBuffer[3 + i * 24] = box.getBoxPoint(1).x;
+            quadBuffer[4 + i * 24] = box.getBoxPoint(1).y;
+            quadBuffer[5 + i * 24] = box.getBoxPoint(1).z;
+            quadBuffer[6 + i * 24] = box.getBoxPoint(2).x;
+            quadBuffer[7 + i * 24] = box.getBoxPoint(2).y;
+            quadBuffer[8 + i * 24] = box.getBoxPoint(2).z;
+            quadBuffer[9 + i * 24] = box.getBoxPoint(3).x;
+            quadBuffer[10 + i * 24] = box.getBoxPoint(3).y;
+            quadBuffer[11 + i * 24] = box.getBoxPoint(3).z;
+            quadBuffer[12 + i * 24] = box.getBoxPoint(4).x;
+            quadBuffer[13 + i * 24] = box.getBoxPoint(4).y;
+            quadBuffer[14 + i * 24] = box.getBoxPoint(4).z;
+            quadBuffer[15 + i * 24] = box.getBoxPoint(5).x;
+            quadBuffer[16 + i * 24] = box.getBoxPoint(5).y;
+            quadBuffer[17 + i * 24] = box.getBoxPoint(5).z;
+            quadBuffer[18 + i * 24] = box.getBoxPoint(6).x;
+            quadBuffer[19 + i * 24] = box.getBoxPoint(6).y;
+            quadBuffer[20 + i * 24] = box.getBoxPoint(6).z;
+            quadBuffer[21 + i * 24] = box.getBoxPoint(7).x;
+            quadBuffer[22 + i * 24] = box.getBoxPoint(7).y;
+            quadBuffer[23 + i * 24] = box.getBoxPoint(7).z;
         }
-        return boxBuffer;
+        return quadBuffer;
     }
 
     public static float[] createPolyBuffer(BSPTree bspTree){

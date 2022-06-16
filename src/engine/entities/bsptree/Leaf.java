@@ -7,7 +7,7 @@ public class Leaf {
     private Leaf right;
     private int nodeId;
     private int rootId;
-    private GeneralBox genBox;
+    private BoundingBox BBox;
     private int triangleId;
     private List<Triangle> triangleList;
 
@@ -35,8 +35,8 @@ public class Leaf {
         return triangleList;
     }
 
-    public GeneralBox getGenBox() {
-        return genBox;
+    public BoundingBox getBoundingBox() {
+        return BBox;
     }
 
     public Leaf(Leaf left, Leaf right, int nodeId, int rootId, int triangleId, List<Triangle> triangleList) {
@@ -44,7 +44,7 @@ public class Leaf {
         this.right = right;
         this.triangleList = triangleList;
         this.triangleId = triangleId;
-        this.genBox = new GeneralBox(triangleList);
+        this.BBox = new BoundingBox(triangleList);
         this.nodeId = nodeId;
         this.rootId = rootId;
     }

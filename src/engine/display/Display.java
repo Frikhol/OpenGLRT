@@ -3,6 +3,7 @@ package display;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
+import tools.Time;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
@@ -59,7 +60,7 @@ public class Display {
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
         glfwWindowHint(GLFW_VISIBLE, GL_FALSE); // the window will stay hidden after creation
         glfwWindowHint(GLFW_RESIZABLE, GL_TRUE); // the window will be resizable
-        glfwWindowHint(GLFW_SAMPLES, 16);
+        //glfwWindowHint(GLFW_SAMPLES, 4);
         WIDTH[0] = 720;
         HEIGHT[0] = 720;
         displayID = glfwCreateWindow(WIDTH[0], HEIGHT[0], "OpenGLRT", NULL, NULL);
@@ -72,8 +73,14 @@ public class Display {
         glfwSwapInterval(1);
         glfwShowWindow(displayID);
         GL.createCapabilities();
+        glfwSetInputMode(displayID, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
         glEnable(GL_DEPTH_TEST);
         //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    }
+
+    public static void countTime(){
+        Time.setDeltaTime((float) (glfwGetTime()-Time.getLastTime()));
+        Time.setLastTime((float) glfwGetTime());
     }
 
     public static void closeDisplay() {

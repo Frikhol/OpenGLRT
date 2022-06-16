@@ -3,6 +3,8 @@ package core.visualiser.shaders;
 import entities.Camera;
 import entities.Light;
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
 import org.joml.Vector4f;
 import tools.Converter;
 
@@ -17,6 +19,8 @@ public class MainShader extends ShaderProgram {
     private int location_viewMatrix;
     private int location_lightPosition;
     private int location_lightColor;
+    private int location_cameraPosition;
+    private int location_cameraRotation;
 
     public MainShader() {
         super(VERTEX_FILE,FRAGMENT_FILE);
@@ -29,6 +33,8 @@ public class MainShader extends ShaderProgram {
         location_viewMatrix = super.getUniformLocation("viewMatrix");
         location_lightPosition = super.getUniformLocation("lightPosition");
         location_lightColor = super.getUniformLocation("lightColor");
+        location_cameraPosition = super.getUniformLocation("cameraPosition");
+        location_cameraRotation = super.getUniformLocation("cameraRotation");
     }
 
     @Override
@@ -57,5 +63,10 @@ public class MainShader extends ShaderProgram {
     }
 
     public void loadColor(Vector4f color){}
+
+    public void loadCamera(Vector3f position, Vector2f rotation) {
+        super.loadVector(location_cameraPosition,position);
+        super.load2DVector(location_cameraRotation,rotation);
+    }
 
 }

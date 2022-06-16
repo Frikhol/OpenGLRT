@@ -69,7 +69,8 @@ public class BSPTree {
             return leaf;
         }
         //Split
-        int splitTriangleIndex = findOptimalTriangle(triangles);
+        //int splitTriangleIndex = findOptimalTriangle(triangles);
+        int splitTriangleIndex = (int)(Math.random()*triangles.size());
         List<Triangle> left = new ArrayList<>();
         List<Triangle> right = new ArrayList<>();
         for(int i = 0;i<triangleCount;i++){
@@ -116,6 +117,41 @@ public class BSPTree {
                 triangles);
         nodeList.add(leaf);
         return leaf;
+    }
+
+    private int getRandomOptimalTriangle(List<Triangle> triangles){
+        float K = .5f;
+        int bestTriangle=0;
+        float bestScore = Float.MAX_VALUE;
+        for(int i = 0;i<Math.ceil(triangles.size()/100f);i++){
+            int num = (int)(Math.random()*triangles.size());
+            //System.out.println("Remaining: "+(triangles.size()-i));
+            int frontCount=0;
+            int backCount=0;
+            int straddlingCount=0;
+            for(int j = 0;j<triangles.size();j++){
+                if(i==j)
+                    continue;
+                switch (classifyTriangleToTriangle(triangles.get(num),triangles.get(j))) {
+                    case COPLANAR:
+                    case FRONT:
+                        frontCount++;
+                        break;
+                    case BACK:
+                        backCount++;
+                        break;
+                    case STRADDLING:
+                        straddlingCount++;
+                        break;
+                }
+            }
+            float score = K*straddlingCount+(1-K)*Math.abs(frontCount-backCount);
+            if(score<bestScore){
+                bestScore=score;
+                bestTriangle=num;
+            }
+        }
+        return bestTriangle;
     }
 
     private int findOptimalTriangle(List<Triangle> triangles){

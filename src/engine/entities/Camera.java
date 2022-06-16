@@ -17,8 +17,22 @@ public class Camera {
         this.yaw = yaw;
     }
 
-    public Vector3f getPosition() {
+    public  Vector3f getPosition() {
         return position;
+    }
+
+    public void move(Vector3f position){
+        this.position.add(position);
+    }
+
+    public void pitch(float angle){
+        if(Math.abs(this.pitch += angle) > 360.0f)
+            this.pitch = 0f;
+    }
+
+    public void yaw(float angle){
+        if(Math.abs(this.yaw += angle) > 360.0f)
+            this.yaw = 0f;
     }
 
     public Vector3f getDirection() {
