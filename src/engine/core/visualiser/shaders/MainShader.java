@@ -21,6 +21,7 @@ public class MainShader extends ShaderProgram {
     private int location_lightColor;
     private int location_cameraPosition;
     private int location_cameraRotation;
+    private int location_skybox;
 
     public MainShader() {
         super(VERTEX_FILE,FRAGMENT_FILE);
@@ -35,6 +36,7 @@ public class MainShader extends ShaderProgram {
         location_lightColor = super.getUniformLocation("lightColor");
         location_cameraPosition = super.getUniformLocation("cameraPosition");
         location_cameraRotation = super.getUniformLocation("cameraRotation");
+        location_skybox = super.getUniformLocation("skybox");
     }
 
     @Override
@@ -42,6 +44,10 @@ public class MainShader extends ShaderProgram {
         super.bindAttribute(1, "position");
         super.bindAttribute(2,"textureCoords");
         super.bindAttribute(3,"normal");
+    }
+
+    public void connectTextureUnits(){
+        super.loadInt(location_skybox,1);
     }
 
     public void loadTransformationMatrix(Matrix4f matrix){

@@ -6,6 +6,7 @@ in vec2 dir;
 out vec4 outColor;
 
 uniform sampler2D someTexture;
+uniform sampler2D skybox;
 uniform mat4 transformationMatrix;
 uniform vec3 cameraPosition;
 uniform vec2 cameraRotation;
@@ -64,17 +65,31 @@ float plaIntersect( in vec3 ro, in vec3 rd, in vec4 p ){
     return -(dot(ro,p.xyz)+p.w)/dot(rd,p.xyz);
 }
 
-vec3 checkPoly(vec3 ro,vec3 rd,int id,out vec3 norm,inout float minIt){
+mat2 rot(float a) {
+    float s = sin(a);
+    float c = cos(a);
+    return mat2(c, -s, s, c);
+}
+
+vec3 getSky(vec3 rd){
+    vec2 uv = vec2(atan(rd.z,rd.x),asin(rd.y)*2.0);
+    uv/=M_PI;
+    uv = uv*0.5+0.5;
+    vec3 col = texture(skybox,uv).rgb;
+    return col;
+}
+
+vec3 checkPoly(vec3 ro,vec3 rd,int id,out vec3 norm,inout vec3 minIt){
     vec3 it;
     vec3 v1 = (transformationMatrix*vec4(polyData[id*18],polyData[id*18+1],polyData[id*18+2],1)).xyz;
     vec3 v2 = (transformationMatrix*vec4(polyData[id*18+6],polyData[id*18+7],polyData[id*18+8],1)).xyz;
     vec3 v3 = (transformationMatrix*vec4(polyData[id*18+12],polyData[id*18+13],polyData[id*18+14],1)).xyz;
-    vec3 n1 = (transformationMatrix*vec4(polyData[id*18+3],polyData[id*18+4],polyData[id*18+5],1)).xyz;
-    vec3 n2 = (transformationMatrix*vec4(polyData[id*18+9],polyData[id*18+10],polyData[id*18+11],1)).xyz;
-    vec3 n3 = (transformationMatrix*vec4(polyData[id*18+15],polyData[id*18+16],polyData[id*18+17],1)).xyz;
+    vec3 n1 = (transformationMatrix*vec4(polyData[id*18+3],polyData[id*18+4],polyData[id*18+5],0)).xyz;
+    vec3 n2 = (transformationMatrix*vec4(polyData[id*18+9],polyData[id*18+10],polyData[id*18+11],0)).xyz;
+    vec3 n3 = (transformationMatrix*vec4(polyData[id*18+15],polyData[id*18+16],polyData[id*18+17],0)).xyz;
     it = triIntersect(ro,rd,v1,v2,v3);
-    if(it.x>0&&it.x<=minIt){
-        minIt = it.x;
+    if(it.x>0&&it.x<=minIt.x){
+        minIt.x = it.x;
         norm = normalize(vec3(((1-it.y-it.z)*n1.x+(it.y)*n2.x+(it.z)*n3.x),((1-it.y-it.z)*n1.y+(it.y)*n2.y+(it.z)*n3.y),((1-it.y-it.z)*n1.z+(it.y)*n2.z+(it.z)*n3.z)));
     }
     return it;
@@ -154,7 +169,7 @@ float checkNode(vec3 ro,vec3 rd,int id){
     return -1;
 }
 
-vec3 castRay(vec3 ro, vec3 rd,out vec3 norm,inout float minIt){
+vec3 castRay(vec3 ro, vec3 rd,out vec3 norm,inout vec3 minIt){
     vec3 it;
     for(int i = 0;i<199999;i++){
         if(nodeData[3+i*4]==1){
@@ -169,20 +184,20 @@ vec3 castRay(vec3 ro, vec3 rd,out vec3 norm,inout float minIt){
             }
         }
     }
-    if(minIt == 100000){
-        vec3 planeNormal = vec3(0.0, -1.0, 0.0);
-        it.x = plaIntersect(ro, rd, vec4(planeNormal, 1.0));
-        if (it.x>0&&it.x<minIt){
-            norm = planeNormal;
-            return vec3(it.x,-1.0,0.0);
-        }
-        else return vec3(-1.0);
+    vec3 planeNormal = vec3(0.0, -1.0, 0.0);
+    it.x = plaIntersect(ro, rd, vec4(planeNormal, 1.0));
+    if (it.x>0&&it.x<minIt.x){
+        norm = planeNormal;
+        minIt = vec3(it.x,-1.0,0.0);
+    }
+    if(minIt.x == 100000){
+        return vec3(-1.0);
     }
     return vec3(minIt);
 }
 
 vec3 castShadows(vec3 ro, vec3 rd){
-    float minIt = 100000;
+    vec3 minIt = vec3(100000);
     vec3 norm;
     vec3 it;
     for(int i = 0;i<199999;i++){
@@ -198,72 +213,20 @@ vec3 castShadows(vec3 ro, vec3 rd){
             }
         }
     }
-    if(minIt == 100000){
-        vec3 planeNormal = vec3(0.0, -1.0, 0.0);
-        it.x = plaIntersect(ro, rd, vec4(planeNormal, 1.0));
-        if (it.x>0&&it.x<minIt){
-            norm = planeNormal;
-            return vec3(it.x,-1.0,0.0);
-        }
-        else{
-            norm = planeNormal;
-            return vec3(-1.0);
-        }
+    vec3 planeNormal = vec3(0.0, -1.0, 0.0);
+    it.x = plaIntersect(ro, rd, vec4(planeNormal, 1.0));
+    if (it.x>0&&it.x<minIt.x){
+        norm = planeNormal;
+        minIt =  vec3(it.x,-1.0,0.0);
+    }
+    if(minIt.x == 100000){
+        return vec3(-1.0);
     }
     return vec3(minIt);
 }
 
-mat2 rot(float a) {
-    float s = sin(a);
-    float c = cos(a);
-    return mat2(c, -s, s, c);
-}
-
-vec3 castRay2(vec3 ro, vec3 rd){
-    float res = 100000;
-    vec3 it;
-    bool finded=false;
-    vec3 norm;
-    vec3 col = vec3(1.0);
-    for(int i = 0;i<626;i++){
-        vec3 v1 = (transformationMatrix* vec4(polyData[i*18],polyData[i*18+1],polyData[i*18+2],1)).xyz;
-        vec3 v2 = (transformationMatrix* vec4(polyData[i*18+6],polyData[i*18+7],polyData[i*18+8],1)).xyz;
-        vec3 v3 = (transformationMatrix* vec4(polyData[i*18+12],polyData[i*18+13],polyData[i*18+14],1)).xyz;
-        vec3 n1 = (transformationMatrix* vec4(polyData[i*18+3],polyData[i*18+4],polyData[i*18+5],1)).xyz;
-        vec3 n2 = (transformationMatrix* vec4(polyData[i*18+9],polyData[i*18+10],polyData[i*18+11],1)).xyz;
-        vec3 n3 = (transformationMatrix* vec4(polyData[i*18+15],polyData[i*18+16],polyData[i*18+17],1)).xyz;
-        it = triIntersect(ro,rd,v1,v2,v3);
-        if(it.x>0.0 && it.x<=res){
-            finded = true;
-            res = it.x;
-            norm = normalize(vec3(((1-it.y-it.z)*n1.x+(it.y)*n2.x+(it.z)*n3.x),((1-it.y-it.z)*n1.y+(it.y)*n2.y+(it.z)*n3.y),((1-it.y-it.z)*n1.z+(it.y)*n2.z+(it.z)*n3.z)));
-            //norm = normalize(cross(v2-v1,v3-v1));
-        }
-    }
-    vec3 light = normalize(vec3(5,-5,10));
-    if(!finded){
-        vec3 planeNormal = vec3(0.0, -1.0, 0.0);
-        it.x = plaIntersect(ro, rd, vec4(planeNormal, 1.0));
-        if(it.x>0&&it.x<res){
-            norm = planeNormal;
-            if(dot(norm,light)>0)
-                return vec3(it.x,0.5,0.0);
-            else
-                return vec3(it.x,0.5,-1.0);
-        }
-        else return vec3(-1.0);
-    }
-    vec3 reflection = reflect(rd, norm);
-    float diff = max(dot(light,norm),0)*0.5;
-    float spec = pow(max(dot(reflection,light),0),4)*10;
-    it.y = (diff+spec+0.1);
-    it.x = res;
-    it.z = dot(norm,light);
-    return it;
-}
-
 vec3 traceRay(vec3 ro,vec3 rd,vec3 light){
-    float minIt = 100000;
+    vec3 minIt = vec3(100000);
     vec3 norm;
     vec3 result = castRay(ro,rd,norm,minIt);
     vec3 itPoint = ro+rd*(result.x);
@@ -275,7 +238,7 @@ vec3 traceRay(vec3 ro,vec3 rd,vec3 light){
     if(result.x == -1.0){
         reflectedLightDirection = reflect(-lightDirection,norm);
         specular = vec3(pow(max(dot(reflectedLightDirection,toCameraVector),0),256));
-        return vec3(0.3, 0.6, 1.0)+specular;
+        return getSky(rd)+specular;
     }//Если ни с чем не пересеклись рисуем небо
     vec3 diffuse = vec3(max(dot(toLightVector,norm),0))*0.5;
     vec3 ambient = vec3(0.1);
@@ -288,13 +251,15 @@ vec3 traceRay(vec3 ro,vec3 rd,vec3 light){
     return color;
 }
 
+
+
 void main(void){
     vec2 uv = (dir.xy-0.5);
     vec3 rayOrigin = cameraPosition;
     vec3 rayDirection = normalize(vec3(uv.x,uv.y,-1.0));
     rayDirection.zy *= rot(-cameraRotation.x);
     rayDirection.zx *= rot(-cameraRotation.y);
-    vec3 light = vec3(1500,-2000,2500);
+    vec3 light = vec3(-6000,-8000,2000);
     vec3 col = traceRay(rayOrigin,rayDirection,light);
     outColor = vec4(col,1.0);
 }

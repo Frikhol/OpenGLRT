@@ -51,7 +51,7 @@ public class Engine {
         some = new Entity("test");
         BSPTree someTree = new BSPTree(Triangle.createTriangleList(some.getMesh().getPolyBuffer()),1);
         System.out.println("Tree built");
-        some.getTransform().translateY(0f);
+        some.getTransform().translateY(1f);
         some.getTransform().rotateX((float) Math.toRadians(-180));
 
 
@@ -94,6 +94,9 @@ public class Engine {
                 0.0f, 0.0f,
         };
         quadSpace = new Entity(vertices,texCoords);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D,Loader.loadTexture("skybox"));
+        CursorInputHandler.cursorInputs();
     }
 
 
@@ -101,7 +104,7 @@ public class Engine {
     public static void loop(){
         countTime();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        //some.getTransform().rotateY((float) Math.toRadians(-0.3));
+        some.getTransform().rotateY((float) Math.toRadians(-0.3));
         KeyInputHandler.getInputs();
         MouseInputHandler.getInputs();
         CursorInputHandler.cursorInputs();

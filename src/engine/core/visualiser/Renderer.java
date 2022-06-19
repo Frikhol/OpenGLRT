@@ -26,6 +26,7 @@ public class Renderer {
         shader.start();
         Camera cam = Engine.getCamera();
         shader.loadCamera(cam.getPosition(),new Vector2f(cam.getPitch()*(float)Math.PI/180,cam.getYaw()*(float)Math.PI/180));
+        shader.connectTextureUnits();
         prepareTexturedEntity(quadSpace);
         //shader.loadProjectionMatrix(Converter.createProjectionMatrix());
         //shader.loadViewMatrix(new Camera(new Vector3f(0f,0f,5f),new Vector3f(0f,0f,0f),0f,0f,0f));
