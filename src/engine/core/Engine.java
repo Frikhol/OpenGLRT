@@ -10,6 +10,7 @@ import entities.bsptree.Bufferizer;
 import entities.bsptree.Triangle;
 import inputs.*;
 import org.joml.Vector3f;
+import tools.Time;
 
 import static core.visualiser.Renderer.render;
 import static core.visualiser.Renderer.renderTex;
@@ -40,7 +41,7 @@ public class Engine {
         Display.createDisplay();
         glClearColor(0f,  0f, 0f, 0.0f); //background's color
         inputList = new DefaultControls();
-        camera = new Camera(new Vector3f(-2.0f,-4.0f,50.0f),new Vector3f(),0,0,0);
+        camera = new Camera(new Vector3f(-2.0f,-12.0f,50.0f),new Vector3f(),13,0,0);
         glfwSetKeyCallback(getDisplayID(), KeyInputHandler.keyCallback);
         glfwSetMouseButtonCallback(getDisplayID(), MouseInputHandler.mouseButtonCallback);
         glfwSetCursorPosCallback(getDisplayID(), CursorInputHandler.cursorPosCallback);
@@ -105,6 +106,7 @@ public class Engine {
         CursorInputHandler.cursorInputs();
         renderTex(quadSpace);
         render(quadSpace);
+        System.out.println(Time.getDeltaTime());
         glfwSwapBuffers(getDisplayID()); // Don't delete
         glfwPollEvents();
 

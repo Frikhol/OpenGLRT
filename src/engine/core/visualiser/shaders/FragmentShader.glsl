@@ -223,24 +223,33 @@ vec4 castRay(inout vec3 ro,inout vec3 rd){
     vec3 norm;
     vec3 it;
     //Пересечение с моделью
-    for(int i = 0;i<199999;i++){
-        if(nodeData[3+i*4]==1){
-            it = checkPoly(ro,rd,nodeData[i*4+1],norm,minIt);
-        }else{
-            it.x = checkNode(ro,rd,i);
-            if(it.x<0){
-                int id = nodeData[i*4]-1;
-                if(id<0)
-                break;
-                i = id;
-            }
-        }
-    }
+    //for(int i = 0;i<199999;i++){
+    //    if(nodeData[3+i*4]==1){
+    //        it = checkPoly(ro,rd,nodeData[i*4+1],norm,minIt);
+    //    }else{
+    //        it.x = checkNode(ro,rd,i);
+    //        if(it.x<0){
+    //            int id = nodeData[i*4]-1;
+    //            if(id<0)
+    //            break;
+    //            i = id;
+    //        }
+    //    }
+    //}
     if(minIt.x != 100000){
         color = vec4(0.0,0.4,0.0,1.0);
     }
-    //Пересечение с прозрачной сферой
-    vec3 sph0 = vec3(5.0,-1.0,15.0);
+    //Пересечение с прозрачной сферой слабой преломление
+    vec3 sph01 = vec3(-4.0,-1.0,12.0);
+    it.xy = sphIntersect(ro,rd,sph01, 2);
+    if(it.x > 0.0 && it.x < minIt.x){
+        minIt = it;
+        vec3 itPos = ro + rd * it.x;
+        norm = normalize(itPos - sph01);
+        color = vec4(1.0,1.0,1.0,-0.05);
+    }
+    //Пересечение с прозрачной сферой линза
+    vec3 sph0 = vec3(4.0,-1.0,7.0);
     it.xy = sphIntersect(ro,rd,sph0, 2);
     if(it.x > 0.0 && it.x < minIt.x){
         minIt = it;
@@ -324,7 +333,7 @@ void main(void){
     rayDirection.zy *= rot(-cameraRotation.x);
     rayDirection.zx *= rot(-cameraRotation.y);
     vec3 col = vec3(0.0);
-    int samples = 5;
+    int samples = 10;
     for(int i = 0; i < samples; i++) {
         col += traceRay(rayOrigin, rayDirection);
     }
