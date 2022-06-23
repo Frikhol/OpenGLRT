@@ -1,5 +1,6 @@
 package entities;
 
+import core.visualiser.Renderer;
 import org.joml.Vector3f;
 
 public class Camera {
@@ -23,6 +24,7 @@ public class Camera {
 
     public void move(Vector3f position){
         this.position.add(position);
+        Renderer.setFramesStill(1);
     }
 
     public void pitch(float angle){

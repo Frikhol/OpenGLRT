@@ -70,7 +70,8 @@ public class BSPTree {
         }
         //Split
         //int splitTriangleIndex = findOptimalTriangle(triangles);
-        int splitTriangleIndex = (int)(Math.random()*triangles.size());
+        int splitTriangleIndex = getRandomOptimalTriangle(triangles);
+        //int splitTriangleIndex = (int)(Math.random()*triangles.size());
         List<Triangle> left = new ArrayList<>();
         List<Triangle> right = new ArrayList<>();
         for(int i = 0;i<triangleCount;i++){
