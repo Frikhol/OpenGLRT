@@ -1,21 +1,15 @@
 package core;
 
-import core.visualiser.Loader;
-import core.visualiser.Renderer;
+import core.visualiser.*;
 import display.Display;
-import entities.Camera;
-import entities.Entity;
-import entities.bsptree.BSPTree;
-import entities.bsptree.Bufferizer;
-import entities.bsptree.Triangle;
+import entities.*;
+import entities.bsptree.*;
 import inputs.*;
 import org.joml.Vector3f;
 import tools.Time;
 
-import static core.visualiser.Renderer.render;
-import static core.visualiser.Renderer.renderTex;
-import static display.Display.countTime;
-import static display.Display.getDisplayID;
+import static core.visualiser.Renderer.*;
+import static display.Display.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
@@ -46,6 +40,11 @@ public class Engine {
         glfwSetMouseButtonCallback(getDisplayID(), MouseInputHandler.mouseButtonCallback);
         glfwSetCursorPosCallback(getDisplayID(), CursorInputHandler.cursorPosCallback);
         some = new Entity("test");
+        //some.getTransform().translateZ(-3f);
+        some.getTransform().scale(0.8f);
+        some.getTransform().translateY(-5f);
+        some.getTransform().rotateY(-1.9f);
+        some.getTransform().rotateX(-0.2f);
         BSPTree someTree = new BSPTree(Triangle.createTriangleList(some.getMesh().getPolyBuffer()),1);
         System.out.println("Tree built successfully");
         some.getTransform().translateY(1f);

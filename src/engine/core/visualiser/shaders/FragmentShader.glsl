@@ -223,21 +223,21 @@ vec4 castRay(inout vec3 ro,inout vec3 rd){
     vec3 norm;
     vec3 it;
     //Пересечение с моделью
-    //for(int i = 0;i<199999;i++){
-    //    if(nodeData[3+i*4]==1){
-    //        it = checkPoly(ro,rd,nodeData[i*4+1],norm,minIt);
-    //    }else{
-    //        it.x = checkNode(ro,rd,i);
-    //        if(it.x<0){
-    //            int id = nodeData[i*4]-1;
-    //            if(id<0)
-    //            break;
-    //            i = id;
-    //        }
-    //    }
-    //}
+    for(int i = 0;i<199999;i++){
+        if(nodeData[3+i*4]==1){
+            it = checkPoly(ro,rd,nodeData[i*4+1],norm,minIt);
+        }else{
+            it.x = checkNode(ro,rd,i);
+            if(it.x<0){
+                int id = nodeData[i*4]-1;
+                if(id<0)
+                break;
+                i = id;
+            }
+        }
+    }
     if(minIt.x != 100000){
-        color = vec4(0.0,0.4,0.0,1.0);
+        color = vec4(0.3,0.3,0.3,0.6);
     }
     //Пересечение с прозрачной сферой слабой преломление
     vec3 sph01 = vec3(-4.0,-1.0,12.0);
@@ -249,7 +249,7 @@ vec4 castRay(inout vec3 ro,inout vec3 rd){
         color = vec4(1.0,1.0,1.0,-0.05);
     }
     //Пересечение с прозрачной сферой линза
-    vec3 sph0 = vec3(4.0,-1.0,7.0);
+    vec3 sph0 = vec3(3.0,-1.0,10.0);
     it.xy = sphIntersect(ro,rd,sph0, 2);
     if(it.x > 0.0 && it.x < minIt.x){
         minIt = it;
@@ -283,10 +283,29 @@ vec4 castRay(inout vec3 ro,inout vec3 rd){
         minIt = vec3(it.x,-1.0,0.0);
         color = vec4(1.0,0.7,0.5,0.01);
     }
+    //planeNormal = vec3(1.0, 0.0, 0.0);
+    //it.x = plaIntersect(ro, rd, vec4(planeNormal, 30));
+    //if (it.x>0&&it.x<minIt.x&&it.x<100){
+    //    norm = planeNormal;
+    //    minIt = vec3(it.x,-1.0,0.0);
+    //    color = vec4(1.0,0.0,0.0,0.01);
+    //}
+    //planeNormal = vec3(-1.0, 0.0, 0.0);
+    //it.x = plaIntersect(ro, rd, vec4(planeNormal, 20));
+    //if (it.x>0&&it.x<minIt.x&&it.x<100){
+    //    norm = planeNormal;
+    //    minIt = vec3(it.x,-1.0,0.0);
+    //    color = vec4(0.0,1.0,0.0,0.01);
+    //}
+    //planeNormal = vec3(0.0, 0.0, 1.0);
+    //it.x = plaIntersect(ro, rd, vec4(planeNormal, 30));
+    //if (it.x>0&&it.x<minIt.x&&it.x<100){
+    //    norm = planeNormal;
+    //    minIt = vec3(it.x,-1.0,0.0);
+    //    color = vec4(0.0,0.0,1.0,0.01);
+    //}
     if(minIt.x == 100000){
-
         return vec4(getSky(rd),-1.0);
-
     }//Если ни с чем не пересеклись рисуем небо
     vec3 reflected = reflect(rd, norm);
     if(color.w < 0){
@@ -314,8 +333,6 @@ vec3 traceRay(vec3 ro,vec3 rd){
         if(result.w == -1.0){
             return color * result.xyz;
         }
-        vec3 ro0 = ro;
-        vec3 lightDir = light;
         color*=result.xyz;
     }
     return color;

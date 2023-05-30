@@ -56,21 +56,16 @@ public class BSPTree {
         int genId = nodeId[0];
         int backId = rootId[0];
 
-        //Empty check
         if(triangles.isEmpty()) {
             return null;
         }
         int triangleCount = triangles.size();
-        //Final leaf
         if(triangleCount<=limit){
             this.getPolyList().add(triangles.get(0));
             Leaf leaf = new Leaf(null,null,genId,backId,polyId,triangles);
             nodeList.add(leaf);
             return leaf;
         }
-        //Split
-        //int splitTriangleIndex = findOptimalTriangle(triangles);
-        //int splitTriangleIndex = getRandomOptimalTriangle(triangles);
         int splitTriangleIndex = (int)(Math.random()*triangles.size());
         List<Triangle> left = new ArrayList<>();
         List<Triangle> right = new ArrayList<>();
@@ -79,7 +74,7 @@ public class BSPTree {
             switch (classifyTriangleToTriangle(triangles.get(splitTriangleIndex),currentTriangle)){
                 case COPLANAR:
                 case FRONT:
-                    left.add(currentTriangle); //Возможно придется добавлять копию вместо оригинала
+                    left.add(currentTriangle);
                     break;
                 case BACK:
                 case STRADDLING:

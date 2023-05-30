@@ -14,8 +14,8 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Display {
     private static long displayID;
-    private static int[] WIDTH = new int[1]; //make changeable
-    private static int[] HEIGHT = new int[1]; //make changeable
+    private static int[] WIDTH = new int[1]; //TODO make changeable
+    private static int[] HEIGHT = new int[1]; //TODO make changeable
     private static double cursorX = 0;
     private static double cursorY = 0;
     //private static int SAMPLES = 16;
