@@ -223,19 +223,19 @@ vec4 castRay(inout vec3 ro,inout vec3 rd){
     vec3 norm;
     vec3 it;
     //Пересечение с моделью
-    for(int i = 0;i<199999;i++){
-        if(nodeData[3+i*4]==1){
-            it = checkPoly(ro,rd,nodeData[i*4+1],norm,minIt);
-        }else{
-            it.x = checkNode(ro,rd,i);
-            if(it.x<0){
-                int id = nodeData[i*4]-1;
-                if(id<0)
-                break;
-                i = id;
-            }
-        }
-    }
+    //for(int i = 0;i<199999;i++){
+    //    if(nodeData[3+i*4]==1){
+    //        it = checkPoly(ro,rd,nodeData[i*4+1],norm,minIt);
+    //    }else{
+    //        it.x = checkNode(ro,rd,i);
+    //        if(it.x<0){
+    //            int id = nodeData[i*4]-1;
+    //            if(id<0)
+    //            break;
+    //            i = id;
+    //        }
+    //    }
+    //}
     if(minIt.x != 100000){
         color = vec4(0.3,0.3,0.3,0.6);
     }
